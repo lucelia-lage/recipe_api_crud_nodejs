@@ -56,47 +56,41 @@ exports.deleteRecipe = async (req, res) => { // supprimer une recette
     }
 }
 
-exports.searchRecipes = async (req, res) => { // rechercher des recettes par titre, ingrédient ou catégorie : 
+// A VOIR AVEC ATTENTION !! tout ce code a été très difficile à cause de l'objet ingredient qui est un tableau d'objets et pas un seul objet comme pour les recettes
+exports.searchRecipes = async (req, res) => {
     try {
-        const { title, category } = req.query; // req.query permet de récupérer les paramètres de la requête envoyée par le client (dans l'url) / title, ingredient et category sont les paramètres de recherche
-
-        let query = {}; // query est un objet qui va contenir les critères de recherche
-
+        const { title, category, ingredient } = req.query;
+        // On crée un objet de filtre vide qui sera peuplé selon les paramètres de la requête
+        let filter = {};
+        // Si un titre est fourni, on l'ajoute au filtre
         if (title) {
-            query.title = new RegExp(title, 'i'); // ça veut dire que la recherche est insensible à la casse (i) : donc ça va chercher dans le titre de la recette (maj et min)
+            filter.title = { $regex: title, $options: 'i' }; // recherche insensible à la casse
         }
-
+        // Si une catégorie est fournie, on l'ajoute au filtre
         if (category) {
-            query.category = new RegExp(category, 'i');
+            filter.category = { $regex: category, $options: 'i' };
         }
-
-        const recipes = await recipeModel.find(query).populate('ingredients'); // on cherche les recettes qui correspondent aux critères de recherche dans la base de données / populate permet de peupler le tableau d'ingrédients avec les données de la collection d'ingrédients
-        res.json(recipes); // on renvoie les recettes trouvées
+        // Si un ingrédient est fourni, on recherche d'abord l'ID de l'ingrédient dans la collection ingredients
+        if (ingredient) {
+            // On recherche l'ID des ingrédients correspondant au nom de l'ingrédient
+            const ingredients = await ingredientModel.find({ name: { $regex: ingredient, $options: 'i' } });
+            // Si des ingrédients sont trouvés, on ajoute un filtre pour les recettes qui les contiennent
+            if (ingredients.length > 0) {
+                const ingredientIds = ingredients.map(ingredient => ingredient._id);
+                filter.ingredients = { $in: ingredientIds };
+            } else {
+                return res.json({ message: "Aucun ingrédient trouvé." });
+            }
+        }
+        // Maintenant on cherche les recettes en utilisant le filtre qu'on a constitué
+        const recipes = await recipeModel.find(filter).populate('ingredients'); // On charge les ingrédients associés
+        // Si des recettes sont trouvées, on les retourne, sinon on renvoie un message
+        if (recipes.length > 0) {
+            res.json(recipes);
+        } else {
+            res.json({ message: "Aucune recette trouvée." });
+        }
     } catch (error) {
-        res.json({ error: error.message });
-    }
-};
-
-exports.searchRecipesByIngredient = async (req, res) => {
-    try {
-        const { ingredient } = req.query;  // Récupère l'ingrédient passé en paramètre de requête
-        
-        const ingredientDoc = await ingredientModel.findOne({ name: ingredient }); //Récupérer l'ObjectId de l'ingrédient dans la collection ingredients
-
-        if (!ingredientDoc) {
-            return res.status(404).json({ message: "Ingrédient non trouvé" }); // Si l'ingrédient n'existe pas, renvoie une erreur 404
-        }
-
-        const recipes = await recipeModel.find({ // Recherche les recettes qui contiennent cet ingrédient dans leur tableau d'ObjectIds
-            ingredients: { $in: [ingredientDoc._id] } // $in permet de vérifier si l'ObjectId de l'ingrédient est présent dans le tableau d'ingrédients de la recette
-        });
-
-        if (recipes.length === 0) { // Si aucune recette n'est trouvée, renvoie une erreur 404
-            return res.status(404).json({ message: "Aucune recette trouvée avec cet ingrédient" }); 
-        }
-
-        res.json(recipes); // Renvoie les recettes trouvées
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.json({ message: error.message });
     }
 };
