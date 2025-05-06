@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); // Importation de mongoose pour la gestion de la base de données MongoDB 
 
-const ingredientSchema = new mongoose.Schema({
+const ingredientSchema = new mongoose.Schema({ // Création d'un schéma pour les ingrédients : ça définit la structure des documents dans la collection d'ingrédients
     name: {
         type: String,
         required: [true, "Le nom de l'ingrédient est requis"],
-        match: [/^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$/, "Nom invalide"]
+        match: [/^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$/, "Nom invalide"] // Validation du nom de l'ingrédient : il doit être composé de lettres, d'accents, d'apostrophes, d'espaces et avoir une longueur entre 2 et 50 caractères
     },
     quantity: {
         type: String,
@@ -12,5 +12,5 @@ const ingredientSchema = new mongoose.Schema({
     }
 });
 
-const ingredientModel = mongoose.model("ingredients", ingredientSchema)
-module.exports = ingredientModel;
+const ingredientModel = mongoose.model("ingredients", ingredientSchema) // Création du modèle d'ingrédient à partir du schéma défini précédemment
+module.exports = ingredientModel; // Exportation du modèle pour l'utiliser dans d'autres fichiers de l'application

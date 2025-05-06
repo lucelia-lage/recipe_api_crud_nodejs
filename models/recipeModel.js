@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); // Importation de mongoose pour la gestion de la base de données MongoDB 
 
-const recipeSchema = new mongoose.Schema({
+const recipeSchema = new mongoose.Schema({ // Création d'un schéma pour les recettes : ça définit la structure des documents dans la collection de recettes
     title: {
         type: String,
         required: [true, "Le titre est requis"]
@@ -38,5 +38,5 @@ const recipeSchema = new mongoose.Schema({
     }
 });
 
-const recipeModel = mongoose.model("recipes", recipeSchema)
-module.exports = recipeModel
+const recipeModel = mongoose.model("recipes", recipeSchema) // Création du modèle de recette à partir du schéma défini précédemment
+module.exports = recipeModel // Exportation du modèle pour l'utiliser dans d'autres fichiers de l'application
