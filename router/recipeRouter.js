@@ -3,6 +3,7 @@ const recipeModel = require("../models/recipeModel"); // Importation du modèle 
 const recipeController = require("../controllers/recipeController"); // Importation du contrôleur de recettes pour gérer la logique métier : ça veut dire que ça va gérer les requêtes envoyées par le client et la réponse à renvoyer au client
 
 recipeRouter.get("/recipes/search", recipeController.searchRecipes); // cette route doit être avant la route get("/recipes/:id") sinon elle ne sera pas prise en compte
+recipeRouter.get("/recipes/search", recipeController.searchRecipesByIngredient); // Route pour rechercher des recettes par ingrédient
 recipeRouter.post("/recipes", recipeController.postRecipe); // Route pour créer une nouvelle recette
 recipeRouter.get("/recipes", recipeController.getRecipes); // Route pour récupérer toutes les recettes
 recipeRouter.get("/recipes/:id", recipeController.getRecipe); // Route pour récupérer une recette par son ID

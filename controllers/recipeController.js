@@ -58,16 +58,12 @@ exports.deleteRecipe = async (req, res) => { // supprimer une recette
 
 exports.searchRecipes = async (req, res) => { // rechercher des recettes par titre, ingrédient ou catégorie : 
     try {
-        const { title, ingredient, category } = req.query; // req.query permet de récupérer les paramètres de la requête envoyée par le client (dans l'url) / title, ingredient et category sont les paramètres de recherche
+        const { title, category } = req.query; // req.query permet de récupérer les paramètres de la requête envoyée par le client (dans l'url) / title, ingredient et category sont les paramètres de recherche
 
         let query = {}; // query est un objet qui va contenir les critères de recherche
 
         if (title) {
             query.title = new RegExp(title, 'i'); // ça veut dire que la recherche est insensible à la casse (i) : donc ça va chercher dans le titre de la recette (maj et min)
-        }
-
-        if (ingredient) {
-            query.ingredients = { $in: [ingredient] }; // ça veut dire que la recherche va chercher dans le tableau d'ingrédients de la recette
         }
 
         if (category) {
@@ -78,5 +74,29 @@ exports.searchRecipes = async (req, res) => { // rechercher des recettes par tit
         res.json(recipes); // on renvoie les recettes trouvées
     } catch (error) {
         res.json({ error: error.message });
+    }
+};
+
+exports.searchRecipesByIngredient = async (req, res) => {
+    try {
+        const { ingredient } = req.query;  // Récupère l'ingrédient passé en paramètre de requête
+        
+        const ingredientDoc = await ingredientModel.findOne({ name: ingredient }); //Récupérer l'ObjectId de l'ingrédient dans la collection ingredients
+
+        if (!ingredientDoc) {
+            return res.status(404).json({ message: "Ingrédient non trouvé" }); // Si l'ingrédient n'existe pas, renvoie une erreur 404
+        }
+
+        const recipes = await recipeModel.find({ // Recherche les recettes qui contiennent cet ingrédient dans leur tableau d'ObjectIds
+            ingredients: { $in: [ingredientDoc._id] } // $in permet de vérifier si l'ObjectId de l'ingrédient est présent dans le tableau d'ingrédients de la recette
+        });
+
+        if (recipes.length === 0) { // Si aucune recette n'est trouvée, renvoie une erreur 404
+            return res.status(404).json({ message: "Aucune recette trouvée avec cet ingrédient" }); 
+        }
+
+        res.json(recipes); // Renvoie les recettes trouvées
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

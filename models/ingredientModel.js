@@ -9,6 +9,11 @@ const ingredientSchema = new mongoose.Schema({ // Création d'un schéma pour le
     quantity: {
         type: String,
         required: [true, "La quantité est requise"]
+    },
+    recipe: { // Référence à la recette à laquelle l'ingrédient appartient : ça permet de lier l'ingrédient à une recette spécifique
+        type: mongoose.Schema.Types.ObjectId, // Type d'identifiant d'objet de mongoose : ça permet de créer une référence vers un autre document dans la base de données
+        ref: "recipes",  // Fais référence au modèle recipes'
+        required: true
     }
 });
 
