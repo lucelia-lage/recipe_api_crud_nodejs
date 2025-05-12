@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mes Recettes</title>
+</head>
+<body>
+  <h1>Mes Recettes</h1>
+
+  <form id="recipe-form">
+    <input type="text" id="title" placeholder="Titre" required><br>
+    <!-- <input type="text" id="ingredients" placeholder="Ingrédients" required><br> -->
+
+    <h3>Ingrédients</h3>
+    <div id="ingredients-container"></div>
+    <button type="button" id="add-ingredient">Ajouter un ingrédient</button><br><br>
+      
+
+    <textarea id="instructions" placeholder="Instructions" required></textarea><br>
+    <input type="number" id="preparation_time" placeholder="Temps de préparation (min)" required><br>
+    <input type="number" id="cook_time" placeholder="Temps de cuisson (min)" required><br>
+    <input type="text" id="difficulty" placeholder="Difficulté" required><br>
+    <input type="text" id="category" placeholder="Catégorie" required><br>
+    <input type="text" id="image" placeholder="Image URL"><br>
+    <button type="submit">Ajouter / Modifier</button>
+  </form>
+
+  <h2>Recettes</h2>
+  <div id="recipes-list"></div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
+

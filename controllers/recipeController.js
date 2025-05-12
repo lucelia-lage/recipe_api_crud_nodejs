@@ -20,18 +20,19 @@ exports.postRecipe = async (req, res) => { // ça c'est la fonction qui va perme
     }
 }
 
-exports.getRecipes = async (req, res) => { // recup toutes les recettes
+exports.getRecipes = async (req, res) => { // Récupérer toutes les recettes
     try {
-        const recipes = await recipeModel.find() // on cherche toutes les recettes dans la bd 
-        res.json(recipes) // on renvoie les recettes trouvées
+        const recipes = await recipeModel.find().populate('ingredients'); // Ajouter le populate ici pour les ingrédients
+        res.json(recipes); // On renvoie les recettes avec leurs ingrédients
     } catch (error) {
-        res.json({ error: error.message })
+        res.json({ error: error.message });
     }
-}
+};
+
 
 exports.getRecipe = async (req, res) => { // recup une recette par son id
     try {
-        const recipe = await recipeModel.findById(req.params.id) // on cherche la recette par son id
+        const recipe = await recipeModel.findById(req.params.id).populate('ingredients'); // on cherche la recette par son id
         res.json(recipe); // on renvoie la recette trouvée
     } catch (error) {
         res.json({ error: error.message });
