@@ -11,7 +11,8 @@ exports.postRecipe = async (req, res) => { // ça c'est la fonction qui va perme
             cook_time: req.body.cook_time,
             difficulty: req.body.difficulty,
             category: req.body.category,
-            image: req.file ? req.file.path : "" // si une image est envoyée, on l'ajoute à la recette, sinon on met une chaîne vide
+            image: req.body.image || ""
+
         })
         await recipe.save(); // on sauvegarde la recette dans la base de données
         res.json({ message: "recipe created", recipe: recipe }); // on renvoie un message de succès et la recette créée

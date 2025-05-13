@@ -2,31 +2,54 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mes Recettes</title>
+  <title>Gestion de Recettes</title>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <h1>Mes Recettes</h1>
+  <h1>Créer une nouvelle recette</h1>
 
   <form id="recipe-form">
     <input type="text" id="title" placeholder="Titre" required><br>
-    <!-- <input type="text" id="ingredients" placeholder="Ingrédients" required><br> -->
 
     <h3>Ingrédients</h3>
     <div id="ingredients-container"></div>
     <button type="button" id="add-ingredient">Ajouter un ingrédient</button><br><br>
-      
 
     <textarea id="instructions" placeholder="Instructions" required></textarea><br>
     <input type="number" id="preparation_time" placeholder="Temps de préparation (min)" required><br>
     <input type="number" id="cook_time" placeholder="Temps de cuisson (min)" required><br>
-    <input type="text" id="difficulty" placeholder="Difficulté" required><br>
-    <input type="text" id="category" placeholder="Catégorie" required><br>
-    <input type="text" id="image" placeholder="Image URL"><br>
-    <button type="submit">Ajouter / Modifier</button>
+    
+    <!-- Listes déroulantes pour Difficulté et Catégorie -->
+    <select id="difficulty" required>
+      <option value="facile">Facile</option>
+      <option value="moyenne">Moyenne</option>
+      <option value="difficile">Difficile</option>
+    </select><br>
+
+    <select id="category" required>
+      <option value="entrée">Entrée</option>
+      <option value="plat">Plat</option>
+      <option value="dessert">Dessert</option>
+    </select><br>
+
+    <input type="file" id="image" accept="image/*"><br> 
+    <button type="submit">Enregistrer la recette</button>
   </form>
 
-  <h2>Recettes</h2>
-  <div id="recipes-list"></div>
+  <hr>
+
+  <h2>Mes Recettes</h2>
+  <ul id="recipe-titles"></ul>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="modal-close">&times;</span>
+      <div id="recipe-detail"></div>
+      <button id="edit-btn">Modifier</button>
+      <button id="save-btn" style="display:none;">Sauvegarder les modifications</button>
+      <button id="delete-btn">Supprimer</button>
+    </div>
+  </div>
 
   <script src="assets/js/app.js"></script>
 </body>
