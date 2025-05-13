@@ -47,7 +47,6 @@ input, textarea, select {
     background-color: #f3e9dc;
 }
 
-/* Modal Styles */
 .modal {
     position: fixed;
     top: 0;
@@ -67,8 +66,8 @@ input, textarea, select {
     width: 90%;
     max-width: 500px;
     position: relative;
-    overflow-y: auto; /* Rendre la modal scrollable */
-    max-height: 80vh; /* Limite de hauteur */
+    overflow-y: auto; /* scrollable */
+    max-height: 80vh; 
 }
 
 #modal-close {
