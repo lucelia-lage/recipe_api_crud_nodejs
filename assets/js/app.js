@@ -127,6 +127,31 @@ function showRecipeDetail(id) {
 document.getElementById('modal-close').addEventListener('click', () => {
   document.getElementById('modal').classList.add('hidden'); // Masquer la modale
 });
+
+// Supprimer une recette
+document.getElementById('delete-btn').addEventListener('click', async () => {
+  if (!currentViewedId) return;
+
+  if (!confirm('Voulez-vous vraiment supprimer cette recette ?')) return;
+
+  try {
+    const res = await fetch(`${API_URL}/${currentViewedId}`, {
+      method: 'DELETE'
+    });
+
+    const data = await res.json();
+    console.log(data.message);
+
+    document.getElementById('modal').classList.add('hidden'); // Fermer la modale
+    loadRecipeTitles(); // Recharger les titres
+    currentViewedId = null;
+  } catch (err) {
+    console.error('Erreur lors de la suppression :', err);
+    alert('Échec de la suppression de la recette.');
+  }
+});
+
+
 // Éditer une recette
 document.getElementById('edit-btn').addEventListener('click', () => {
   fetch(`${API_URL}/${currentViewedId}`)

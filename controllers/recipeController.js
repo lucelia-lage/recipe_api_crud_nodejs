@@ -49,15 +49,15 @@ exports.updateRecipe = async (req, res) => { // mettre à jour une recette
     }
 }
 
-exports.deleteRecipe = async (req, res) => { // supprimer une recette
+exports.deleteRecipe = async (req, res) => {
     try {
-        await recipeModel.findByIdAndDelete(req.params.id) // on cherche la recette par son id et on la supprime
-        res.json({ message: "Recette supprimée" });
+        await ingredientModel.deleteMany({ recipe: req.params.id }); // Supprimer les ingrédients associés à la recette
+        await recipeModel.findByIdAndDelete(req.params.id);// Supprimer la recette
+        res.json({ message: "Recette et ingrédients associés supprimés" });
     } catch (error) {
-        res.json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 }
-
 // A VOIR AVEC ATTENTION !! tout ce code a été très difficile à cause de l'objet ingredient qui est un tableau d'objets et pas un seul objet comme pour les recettes
 exports.searchRecipes = async (req, res) => {
     try {
