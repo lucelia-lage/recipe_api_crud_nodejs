@@ -10,7 +10,7 @@ Une API complète pour gérer des recettes de cuisine. Créez, modifiez, supprim
 - Modifier une recette existante
 - Supprimer une recette
 
-## 🛠️ Technologies utilisées
+## Technologies utilisées
 
 - **Backend** : Node.js, Express.js
 - **Base de données** : MongoDB avec Mongoose
@@ -28,10 +28,6 @@ Une API complète pour gérer des recettes de cuisine. Créez, modifiez, supprim
 ### Étapes d'installation
 
 1. **Cloner le projet**
-   ```bash
-   git clone https://github.com/votre-username/api-recettes.git
-   cd api-recettes
-   ```
 
 2. **Installer les dépendances**
    ```bash
