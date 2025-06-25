@@ -1,36 +1,35 @@
-// commentaires faits par copilot (mais compris par moi)
 const API_URL = 'http://localhost:3000/recipes';
 let editingId = null; // ID de la recette en cours d'édition
 let currentViewedId = null; // ID de la recette actuellement affichée
+
 // Ajouter un nouvel ingrédient
 document.getElementById('add-ingredient').addEventListener('click', () => {
-  const container = document.getElementById('ingredients-container'); // Récupérer le conteneur des ingrédients
+  const container = document.getElementById('ingredients-container');
 
-  const ingredientDiv = document.createElement('div'); // Créer un nouvel élément div pour l'ingrédient
-  ingredientDiv.className = 'ingredient-row'; // Ajouter une classe pour le style
-  // Ajouter des champs pour le nom et la quantité de l'ingrédient
+  const ingredientDiv = document.createElement('div');
+  ingredientDiv.className = 'ingredient-row';
   ingredientDiv.innerHTML = `
     <input type="text" placeholder="Nom de l'ingrédient" class="ingredient-name" required />
     <input type="text" placeholder="Quantité" class="ingredient-quantity" required />
     <button type="button" class="remove-ingredient">Supprimer</button>
   `;
-  // Ajouter l'élément au conteneur
   container.appendChild(ingredientDiv);
-  // Ajouter un événement pour supprimer l'ingrédient
+  
   ingredientDiv.querySelector('.remove-ingredient').addEventListener('click', () => {
-    container.removeChild(ingredientDiv); // Supprimer l'élément du conteneur
+    container.removeChild(ingredientDiv);
   });
 });
+
 // Soumettre le formulaire
 document.getElementById('recipe-form').addEventListener('submit', async (e) => {
-  e.preventDefault(); // Empêcher le rechargement de la page
+  e.preventDefault();
+  
   // Récupérer tous les ingrédients saisis
   const ingredients = Array.from(document.querySelectorAll('.ingredient-row')).map(row => ({
-    name: row.querySelector('.ingredient-name').value, // Récupérer le nom de l'ingrédient
-    quantity: row.querySelector('.ingredient-quantity').value // Récupérer la quantité de l'ingrédient
+    name: row.querySelector('.ingredient-name').value,
+    quantity: row.querySelector('.ingredient-quantity').value
   }));
-  const imageInput = document.getElementById('image'); // Récupérer le champ d'image
-  const file = imageInput.files[0]; // Récupérer le fichier image sélectionné
+
   // Créer un objet recette avec les données du formulaire
   const recipe = {
     title: document.getElementById('title').value,
@@ -42,18 +41,20 @@ document.getElementById('recipe-form').addEventListener('submit', async (e) => {
     category: document.getElementById('category').value,
     image: ""
   };
+
   // Fonction pour envoyer la recette au serveur
   const sendRecipe = async (finalRecipe) => {
-    const method = editingId ? 'PUT' : 'POST'; // Déterminer la méthode HTTP
-    const url = editingId ? `${API_URL}/${editingId}` : API_URL; // Déterminer l'URL
+    const method = editingId ? 'PUT' : 'POST';
+    const url = editingId ? `${API_URL}/${editingId}` : API_URL;
 
     const response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(finalRecipe)
     });
-    const newRecipe = await response.json(); // Récupérer la réponse du serveur
+    const newRecipe = await response.json();
     const recipeId = newRecipe.recipe ? newRecipe.recipe._id : newRecipe._id;
+    
     // Envoyer les ingrédients un par un
     for (let ing of ingredients) {
       await fetch(`http://localhost:3000/ingredients/${recipeId}`, {
@@ -65,53 +66,47 @@ document.getElementById('recipe-form').addEventListener('submit', async (e) => {
     resetForm();
     loadRecipeTitles();
   };
-  if (file) {
-    const reader = new FileReader(); // Créer un lecteur de fichier
-    reader.onloadend = () => {
-      recipe.image = reader.result; // Ajouter l'image à la recette
-      sendRecipe(recipe); // Envoyer la recette
-    };
-    reader.readAsDataURL(file); // Lire l'image
-  } else {
-    sendRecipe(recipe); // Envoyer la recette sans image
-  }
+
+  sendRecipe(recipe); // Envoyer la recette sans image
 });
+
 // Réinitialiser le formulaire
 function resetForm() {
-  editingId = null; // Réinitialiser l'ID d'édition
-  document.getElementById('recipe-form').reset(); // Réinitialiser le formulaire
-  document.getElementById('ingredients-container').innerHTML = ''; // Vider le conteneur
+  editingId = null;
+  document.getElementById('recipe-form').reset();
+  document.getElementById('ingredients-container').innerHTML = '';
 }
+
 // Charger les titres des recettes
 function loadRecipeTitles() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
       const list = document.getElementById('recipe-titles');
-      list.innerHTML = ''; // Vider la liste
+      list.innerHTML = '';
 
       data.forEach(recipe => {
-        const li = document.createElement('li'); // Créer un élément de liste
+        const li = document.createElement('li');
         li.textContent = recipe.title;
-        li.addEventListener('click', () => showRecipeDetail(recipe._id)); // Ajouter un événement
-        list.appendChild(li); // Ajouter à la liste
+        li.addEventListener('click', () => showRecipeDetail(recipe._id));
+        list.appendChild(li);
       });
     });
 }
+
 // Afficher les détails d'une recette
 function showRecipeDetail(id) {
-  currentViewedId = id; // Mettre à jour l'ID courant
+  currentViewedId = id;
 
   fetch(`${API_URL}/${id}`)
     .then(res => res.json())
     .then(recipe => {
-      const container = document.getElementById('recipe-detail'); // Conteneur des détails
+      const container = document.getElementById('recipe-detail');
 
       const ingredientsList = recipe.ingredients.map(ing => `${ing.name} (${ing.quantity})`).join(', ');
-      // Ajouter les détails de la recette
+      
       container.innerHTML = `
         <h3>${recipe.title}</h3>
-        ${recipe.image ? `<img src="${recipe.image}" alt="Image de la recette">` : ''}
         <p><strong>Ingrédients:</strong> ${ingredientsList}</p>
         <p><strong>Instructions:</strong> ${recipe.instructions}</p>
         <p><strong>Préparation:</strong> ${recipe.preparation_time} min</p>
@@ -120,12 +115,13 @@ function showRecipeDetail(id) {
         <p><strong>Catégorie:</strong> ${recipe.category}</p>
       `;
 
-      document.getElementById('modal').classList.remove('hidden'); // Afficher la modale
+      document.getElementById('modal').classList.remove('hidden');
     });
 }
+
 // Fermer le modal
 document.getElementById('modal-close').addEventListener('click', () => {
-  document.getElementById('modal').classList.add('hidden'); // Masquer la modale
+  document.getElementById('modal').classList.add('hidden');
 });
 
 // Supprimer une recette
@@ -142,8 +138,8 @@ document.getElementById('delete-btn').addEventListener('click', async () => {
     const data = await res.json();
     console.log(data.message);
 
-    document.getElementById('modal').classList.add('hidden'); // Fermer la modale
-    loadRecipeTitles(); // Recharger les titres
+    document.getElementById('modal').classList.add('hidden');
+    loadRecipeTitles();
     currentViewedId = null;
   } catch (err) {
     console.error('Erreur lors de la suppression :', err);
@@ -151,13 +147,13 @@ document.getElementById('delete-btn').addEventListener('click', async () => {
   }
 });
 
-
 // Éditer une recette
 document.getElementById('edit-btn').addEventListener('click', () => {
   fetch(`${API_URL}/${currentViewedId}`)
     .then(res => res.json())
     .then(recipe => {
-      editingId = currentViewedId; // Mettre à jour l'ID d'édition
+      editingId = currentViewedId;
+      
       // Remplir le formulaire avec les infos existantes
       document.getElementById('title').value = recipe.title;
       document.getElementById('instructions').value = recipe.instructions;
@@ -165,6 +161,7 @@ document.getElementById('edit-btn').addEventListener('click', () => {
       document.getElementById('cook_time').value = recipe.cook_time;
       document.getElementById('difficulty').value = recipe.difficulty;
       document.getElementById('category').value = recipe.category;
+      
       // Vider et remplir les ingrédients
       const ingredientsContainer = document.getElementById('ingredients-container');
       ingredientsContainer.innerHTML = '';
@@ -179,8 +176,9 @@ document.getElementById('edit-btn').addEventListener('click', () => {
         ingredientsContainer.appendChild(row);
       });
 
-      document.getElementById('modal').classList.add('hidden'); // Fermer la modale
+      document.getElementById('modal').classList.add('hidden');
     });
 });
+
 // Charger les titres au chargement de la page
 loadRecipeTitles();

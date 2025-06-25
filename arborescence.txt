@@ -1,0 +1,17 @@
+├── arborescence.js
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── app.js
+├── controllers/
+│   ├── ingredientController.js
+│   └── recipeController.js
+├── index.html
+├── models/
+│   ├── ingredientModel.js
+│   └── recipeModel.js
+├── router/
+│   ├── ingredientRouter.js
+│   └── recipeRouter.js
+└── server.js
